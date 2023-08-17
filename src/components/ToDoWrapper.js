@@ -1,11 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Todo } from './ToDo';
 import { TodoForm } from './ToDoForm';
 import { v4 as uuidv4 } from "uuid";
 import { EditTodoForm } from './EditToDoForm';
 
 export const TodoWrapper = () => {
-  const [todos, setTodos] = useState([]);
+    const [todos, setTodos] = useState([]);
+
+useEffect(() => {
+    const storedTodos = localStorage.getItem("todos");
+    if (storedTodos) {
+      setTodos(JSON.parse(storedTodos));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   const addTodo = (todo) => {
     setTodos([
@@ -44,6 +55,7 @@ export const TodoWrapper = () => {
     <div className="TodoWrapper">
       <h1>Get your stuff together!</h1>
       <TodoForm addTodo={addTodo} />
+
       {todos.map((todo) =>
         todo.isEditing ? (
           <EditTodoForm editTodo={editTask} task={todo} />
